@@ -88,17 +88,17 @@ export const postParticipant = async (req, res) => {
     return res.status(400).send({ error: error.message }).end();
   }
 
-  const cleanfirstName = mysql
+  const cleanFirstName = mysql
     .escape(participantData.firstName)
     .replaceAll("'", "");
-  const cleanlastName = mysql
+  const cleanLastName = mysql
     .escape(participantData.lastName)
     .replaceAll("'", "");
-  const cleanemail = mysql.escape(participantData.email).replaceAll("'", "");
-  const cleanbirthDate = mysql
+  const cleanEmail = mysql.escape(participantData.email).replaceAll("'", "");
+  const cleanBirthDate = mysql
     .escape(participantData.birthDate)
     .replaceAll("'", "");
-  const cleaneventId = mysql
+  const cleanEventId = mysql
     .escape(participantData.eventId)
     .replaceAll("'", "");
   const age = new Date.getFullYear() - participantData.birthDate.getFullYear();
@@ -117,7 +117,7 @@ export const postParticipant = async (req, res) => {
   try {
     const con = await mysql.createConnection(MYSQL_CONFIG);
     const result = await con.execute(
-      `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanfirstName}', '${cleanlastName}', '${cleanemail}','${cleanbirthDate}', '${age}');`
+      `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanFirstName}', '${cleanLastName}', '${cleanEmail}','${cleanBirthDate}', '${age}');`
     );
     await con.end();
 
