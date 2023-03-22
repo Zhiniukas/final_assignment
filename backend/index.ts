@@ -14,9 +14,8 @@ import { getParticipantEvents } from "./src/modules/participants";
 import { postParticipant } from "./src/modules/participants";
 
 import { getEvents } from "./src/modules/events";
-//import { getEventParticipants } from "./src/modules/events";
-//import { postEvent } from "./src/modules/events";
-//import { addEventParticipant } from "./src/modules/events";
+import { getEventParticipants } from "./src/modules/events";
+import { postEvent } from "./src/modules/events";
 
 import { PORT } from "./config";
 
@@ -35,10 +34,8 @@ app.post("/participants", isUserLoggedIn, postParticipant);
 //app.get("/events", isUserLoggedIn, getEvents);
 
 app.get("/events", getEvents);
-//app.get("/events/:event_id", isUserLoggedIn, getEventParticipants);
-
-//app.post("/events", isUserLoggedIn, postEvent);
-//app.post("/events/:event_id", isUserLoggedIn, addEventParticipant);
+app.get("/events/:event_id", isUserLoggedIn, getEventParticipants);
+app.post("/events", isUserLoggedIn, postEvent);
 
 app.get("/", (_, res) => {
   res.send({ msg: "Server is running" });
