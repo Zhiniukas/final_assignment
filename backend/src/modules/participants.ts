@@ -81,6 +81,7 @@ export const getParticipantEvents = async (req, res) => {
 
 export const postParticipant = async (req, res) => {
   let participantData = req.body;
+  let participantId = 0;
 
   try {
     participantData = await schema.validateAsync(participantData);
@@ -116,24 +117,61 @@ export const postParticipant = async (req, res) => {
 
   try {
     const con = await mysql.createConnection(MYSQL_CONFIG);
-    const result = await con.execute(
-      `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanFirstName}', '${cleanLastName}', '${cleanEmail}','${cleanBirthDate}', '${age}');`
+    const [data] = await con.execute(
+      `SELECT participant_id, email 
+    FROM participants 
+    WHERE (email= ${cleanEmail}) ;`
     );
     await con.end();
 
-    const result1 = await con.execute(
-      `SELECT participant_id
-      FROM participants
-      WHERE (email='${cleanemail}');`
-    );
-    await con.end();
+    if (Array.isArray(data) && data.length === 0) {
+      try {
+        const con = await mysql.createConnection(MYSQL_CONFIG);
+        const result = await con.execute(
+          `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanFirstName}', '${cleanLastName}', '${cleanEmail}','${cleanBirthDate}', '${age}');`
+        );
+        await con.end();
 
-    const result2 = await con.execute(
-      `INSERT INTO event_participants (participant_id, event_id) VALUES ('${result1.participant_id}', '${cleaneventId}');`
-    );
-    await con.end();
+        const result1 = await con.execute(
+          `SELECT participant_id
+        FROM participants
+        WHERE (email='${cleanEmail}');`
+        );
+        await con.end();
 
-    res.send(result[0], result1[0], result2[0]).end();
+        const result2 = await con.execute(
+          `INSERT INTO event_participants (participant_id, event_id) VALUES ('${result1.participant_id}', '${cleaneventId}');`
+        );
+        await con.end();
+
+        res.send(result[0], result1[0], result2[0]).end();
+      } catch (err) {
+        res.status(500).send(err).end();
+        return console.error(err);
+      }
+    } else {
+      if (Array.isArray(data) && data.length != 0) {
+        participantId = data[0].participant_id;
+
+        console.log(data);
+
+        try {
+          const con = await mysql.createConnection(MYSQL_CONFIG);
+
+          const result = await con.execute(
+            `INSERT INTO event_participants (participant_id, event_id) VALUES ('${data[0].participant_id}', '${cleanEventId}');`
+          );
+          await con.end();
+
+          res.send(result[0]).end();
+        } catch (err) {
+          res.status(500).send(err).end();
+          return console.error(err);
+        }
+      } else {
+        return res.status(409).send("Error! Error fetching data!").end();
+      }
+    }
   } catch (err) {
     res.status(500).send(err).end();
     return console.error(err);
