@@ -8,7 +8,7 @@ const userSchema = Joi.object({
   email: Joi.string().email().trim().lowercase().required(),
   password: Joi.string().required(),
   firstName: Joi.string(),
-  fLastName: Joi.string(),
+  lastName: Joi.string(),
 });
 
 export const userRegister = async (req, res) => {

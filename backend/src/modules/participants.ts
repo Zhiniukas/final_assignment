@@ -117,17 +117,23 @@ export const postParticipant = async (req, res) => {
   try {
     const con = await mysql.createConnection(MYSQL_CONFIG);
     const result = await con.execute(
-      `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanfirstName}', '${cleanlastName}', '${cleanemail}','${cleanbirthDate}', '${age}');``SELECT participant_id
+      `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanfirstName}', '${cleanlastName}', '${cleanemail}','${cleanbirthDate}', '${age}');`
+    );
+    await con.end();
+
+    const result1 = await con.execute(
+      `SELECT participant_id
       FROM participants
       WHERE (email='${cleanemail}');`
     );
     await con.end();
+
     const result2 = await con.execute(
-      `INSERT INTO event_participants (participant_id, event_id) VALUES ('${result.participant_id}', '${cleaneventId}')`
+      `INSERT INTO event_participants (participant_id, event_id) VALUES ('${result1.participant_id}', '${cleaneventId}');`
     );
     await con.end();
 
-    res.send(result[0], result2[0]).end();
+    res.send(result[0], result1[0], result2[0]).end();
   } catch (err) {
     res.status(500).send(err).end();
     return console.error(err);
