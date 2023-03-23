@@ -32,7 +32,7 @@ export const getEventParticipants = async (req, res) => {
     const result = await con.execute(
       `SELECT participants.participant_id AS "participantId", participants.first_name AS "firstName", participants.last_name AS "lastName", participants.email AS "email", participants.date_of_birth AS "birthDate", participants.age AS "age", events.event_name AS "eventName", events.event_description AS "eventDescription", events.event_date AS "eventDate", events.event_place AS "eventPlace", events.event_id AS "eventId"
       FROM (events INNER JOIN event_participants ON events.event_id = event_participants.event_id) INNER JOIN participants ON event_participants.participant_id = participants.participant_id
-      WHERE (((events.event_id)=('${eventtId}')) AND ((participants.archived)=0) AND ((events.archived)=0))
+      WHERE (((events.event_id)=('${eventId}')) AND ((participants.archived)=0) AND ((events.archived)=0))
       ORDER BY events.event_date;`
     );
     await con.end();

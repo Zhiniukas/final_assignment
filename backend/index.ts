@@ -27,16 +27,27 @@ app.use(cors(), express.json(), cookieParser());
 app.post("/login", userLogin);
 app.post("/register", userRegister);
 
-app.get("/participants", isUserLoggedIn, getParticipants);
-app.get("/participants", isUserLoggedIn, getAllParticipants);
-app.get("/participants/:participant_id", isUserLoggedIn, getParticipantEvents);
-app.post("/participants", isUserLoggedIn, postParticipant);
+app.get("/participants", getParticipants);
+app.get("/all-participants", getAllParticipants);
+app.get("/participants/:participant_id", getParticipantEvents);
+app.post("/participants", postParticipant);
 
 //app.get("/events", isUserLoggedIn, getEvents);
 
 app.get("/events", getEvents);
-app.get("/events/:event_id", isUserLoggedIn, getEventParticipants);
-app.post("/events", isUserLoggedIn, postEvent);
+app.get("/events/:event_id", getEventParticipants);
+app.post("/events", postEvent);
+
+// app.get("/participants", isUserLoggedIn, getParticipants);
+// app.get("/participants", isUserLoggedIn, getAllParticipants);
+// app.get("/participants/:participant_id", isUserLoggedIn, getParticipantEvents);
+// app.post("/participants", isUserLoggedIn, postParticipant);
+
+// //app.get("/events", isUserLoggedIn, getEvents);
+
+// app.get("/events", getEvents);
+// app.get("/events/:event_id", isUserLoggedIn, getEventParticipants);
+// app.post("/events", isUserLoggedIn, postEvent);
 
 app.get("/", (_, res) => {
   res.send({ msg: "Server is running" });

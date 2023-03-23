@@ -1,13 +1,14 @@
+import Joi from "joi";
 import mysql from "mysql2/promise";
 import { MYSQL_CONFIG } from "../../config";
-import { jwtSecret } from "../../config";
+//import { jwtSecret } from "../../config";
 
 const schema = Joi.object({
   email: Joi.string().email().trim().lowercase().required(),
   firstName: Joi.string(),
   lastName: Joi.string(),
-  birthDate = Joi.date(),
-  eventId = Joi.number(),
+  birthDate: Joi.date(),
+  eventId: Joi.number(),
 });
 
 export const getParticipants = async (_, res) => {
@@ -102,7 +103,8 @@ export const postParticipant = async (req, res) => {
   const cleanEventId = mysql
     .escape(participantData.eventId)
     .replaceAll("'", "");
-  const age = new Date.getFullYear() - participantData.birthDate.getFullYear();
+  const age =
+    new Date().getFullYear() - participantData.birthDate.getFullYear();
 
   if (
     participantData.eventId < 0 ||
@@ -120,29 +122,34 @@ export const postParticipant = async (req, res) => {
     const [data] = await con.execute(
       `SELECT participant_id, email 
     FROM participants 
-    WHERE (email= ${cleanEmail}) ;`
+    WHERE (email= "${cleanEmail}") ;`
     );
     await con.end();
 
     if (Array.isArray(data) && data.length === 0) {
       try {
-        const con = await mysql.createConnection(MYSQL_CONFIG);
-        const result = await con.execute(
+        const con1 = await mysql.createConnection(MYSQL_CONFIG);
+        const result = await con1.execute(
           `INSERT INTO participants (first_name, last_name, email, date_of_birth, age) VALUES('${cleanFirstName}', '${cleanLastName}', '${cleanEmail}','${cleanBirthDate}', '${age}');`
         );
-        await con.end();
+        await con1.end();
 
-        const result1 = await con.execute(
+        const con2 = await mysql.createConnection(MYSQL_CONFIG);
+        const [result1] = await con2.execute(
           `SELECT participant_id
         FROM participants
         WHERE (email='${cleanEmail}');`
         );
-        await con.end();
+        await con2.end();
 
-        const result2 = await con.execute(
-          `INSERT INTO event_participants (participant_id, event_id) VALUES ('${result1.participant_id}', '${cleaneventId}');`
+        const response1 = JSON.stringify(result1[0]);
+        participantId = JSON.parse(response1).participant_id;
+
+        const con3 = await mysql.createConnection(MYSQL_CONFIG);
+        const result2 = await con3.execute(
+          `INSERT INTO event_participants (participant_id, event_id) VALUES ('${participantId}', '${cleanEventId}');`
         );
-        await con.end();
+        await con3.end();
 
         res.send(result[0], result1[0], result2[0]).end();
       } catch (err) {
@@ -151,15 +158,14 @@ export const postParticipant = async (req, res) => {
       }
     } else {
       if (Array.isArray(data) && data.length != 0) {
-        participantId = data[0].participant_id;
-
-        console.log(data);
+        const response = JSON.stringify(data[0]);
+        participantId = JSON.parse(response).participant_id;
 
         try {
           const con = await mysql.createConnection(MYSQL_CONFIG);
 
           const result = await con.execute(
-            `INSERT INTO event_participants (participant_id, event_id) VALUES ('${data[0].participant_id}', '${cleanEventId}');`
+            `INSERT INTO event_participants (participant_id, event_id) VALUES ('${participantId}', '${cleanEventId}');`
           );
           await con.end();
 
