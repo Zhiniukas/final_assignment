@@ -34,7 +34,7 @@ export const getAllParticipants = async (_, res) => {
     const con = await mysql.createConnection(MYSQL_CONFIG);
 
     const result = await con.execute(
-      `SELECT participant_id AS "participantId", first_name AS "firstName", last_name AS "lastName", email AS "email", date_of_birth AS "birthDate", age AS "age"
+      `SELECT participant_id AS "participantId", first_name AS "firstName", last_name AS "lastName", email AS "email", date_of_birth AS "birthDate", age AS "age", participants.archived AS "isArchived"
       FROM participants 
       ORDER BY last_name;`
     );

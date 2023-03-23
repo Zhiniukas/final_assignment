@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import "./App.css";
+import { useEffect, useState } from "react";
+import { MainRouter } from "./components/MainRouter/MainRouter";
+import { TEvents } from "./types/TEvents";
+import { TParticipants } from "./types/TParticipants";
 
-function App() {
+export const App = () => {
+  const [events, setEvents] = useState<TEvents[]>([]);
+  const [participants, setParticipants] = useState<TParticipants[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const GetEvents = () => {
+    axios
+      .get("http://localhost:5001/events")
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          setEvents(res.data);
+        }
+      })
+      .catch((error) => console.error(error))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    GetEvents();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {isLoading ? <h1>Loading...</h1> : <MainRouter />}
     </div>
   );
-}
-
-export default App;
+};
