@@ -14,6 +14,8 @@ const userSchema = Joi.object({
 export const userRegister = async (req, res) => {
   let userData = req.body;
 
+  console.log(userData);
+
   try {
     userData = await userSchema.validateAsync(userData);
   } catch (error) {

@@ -11,7 +11,8 @@ const userSchema = Joi.object({
 });
 
 export const userLogin = async (req, res) => {
-  let userData = req.body;
+  let userData = { email: req.body.email, password: req.body.password };
+
   try {
     userData = await userSchema.validateAsync(userData);
   } catch (error) {
@@ -51,9 +52,17 @@ export const userLogin = async (req, res) => {
 
       return res
         .send({
-          message: "Succesfully logged in",
+          //message: "Succesfully logged in",
           accessToken: token,
           issuedAt: issuedAt,
+          email: data[0].email,
+          userId: data[0].user_id,
+          firstName: data[0].first_name,
+          lastName: data[0].last_name,
+          roles: [
+            { role: "ROLE_MODERATOR", index: 1 },
+            { role: "admin", index: 2 },
+          ],
         })
         .end();
     }
