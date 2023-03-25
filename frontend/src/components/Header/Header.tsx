@@ -59,7 +59,7 @@ export const HeaderNotAuthed: FC = () => {
   return (
     <Box component={"header"} textAlign="center" margin="0 auto" width="600px">
       <Typography variant="h3" padding={2} fontWeight="300" fontSize="44px">
-        Title
+        Not authed
       </Typography>
 
       <Grid

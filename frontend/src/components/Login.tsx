@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import Typography from "@mui/material/Typography";
 
 import { login, logout } from "../services/auth.service";
 
@@ -115,10 +116,15 @@ export const Login: React.FC<Props> = () => {
 export const Logout = () => {
   let navigate: NavigateFunction = useNavigate();
 
-  logout();
+  useEffect(() => {
+    logout();
+    navigate("/login");
+    window.location.reload();
+  }, []);
 
-  navigate("/login");
-  window.location.reload();
-
-  return <h3>Sucessfully Logged Out</h3>;
+  return (
+    <Typography variant="h3" padding={2} fontWeight="300" fontSize="44px">
+      Sucessfully Logged Out
+    </Typography>
+  );
 };

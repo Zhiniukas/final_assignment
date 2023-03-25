@@ -11,7 +11,6 @@ export const login = (email: string, password: string) => {
     .then((response) => {
       if (response.data.accessToken) {
         localStorage.setItem("user", JSON.stringify(response.data));
-        console.log("user", JSON.stringify(response.data));
       }
 
       return response.data;

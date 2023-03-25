@@ -59,10 +59,6 @@ export const userLogin = async (req, res) => {
           userId: data[0].user_id,
           firstName: data[0].first_name,
           lastName: data[0].last_name,
-          roles: [
-            { role: "ROLE_MODERATOR", index: 1 },
-            { role: "admin", index: 2 },
-          ],
         })
         .end();
     }
