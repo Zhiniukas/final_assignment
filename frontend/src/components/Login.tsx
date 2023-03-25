@@ -3,11 +3,11 @@ import { NavigateFunction, useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-import { login } from "../services/auth.service";
+import { login, logout } from "../services/auth.service";
 
 type Props = {};
 
-const Login: React.FC<Props> = () => {
+export const Login: React.FC<Props> = () => {
   let navigate: NavigateFunction = useNavigate();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -112,4 +112,13 @@ const Login: React.FC<Props> = () => {
   );
 };
 
-export default Login;
+export const Logout = () => {
+  let navigate: NavigateFunction = useNavigate();
+
+  logout();
+
+  navigate("/login");
+  window.location.reload();
+
+  return <h3>Sucessfully Logged Out</h3>;
+};
