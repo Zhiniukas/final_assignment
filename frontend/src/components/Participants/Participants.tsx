@@ -6,6 +6,7 @@ import {
   ParticipantContainer,
   TransparentButton,
 } from "../../styles";
+import { TParticipants } from "../../types";
 
 export const Participants = () => {
   const [isParticipantSelected, setIsParticipantSelected] =
@@ -19,18 +20,6 @@ export const Participants = () => {
     setIsParticipantSelected(showList);
   };
 
-  // let temp ;
-
-  // participants.map(participant) => (
-  //  temp = [...temp,  participant])
-
-  // let cleanParticipants = temp.reduce((accumulator:TParticipants, value) => {
-  //   if (!accumulator.includes(currentValue)) {
-  //     accumulator([...accumulator, currentValue]);
-  //   }
-  //   return accumulator;
-  // }, []);
-
   return (
     <ParticipantsContainer>
       {participants.map((participant, i) => (
@@ -41,7 +30,41 @@ export const Participants = () => {
           <p>Email: {participant.email}</p>
           <p>Date of Birth: {participant.birthDate}</p>
           <p>Participant Age: {participant.age}</p>
-          <p>Participant Event Id: {participant.eventId}</p>
+          {participant.participantId === participantNumber &&
+          isParticipantSelected ? (
+            <>
+              <TransparentButton
+                onClick={() => handleClick(participant.participantId, false)}
+              >
+                Hide Events list
+              </TransparentButton>
+
+              {participants
+                .filter(
+                  (participant) =>
+                    participant.participantId === participantNumber
+                )
+                .map((filteredParticipant, j) => (
+                  <>
+                    <p>Event Id: {filteredParticipant.eventId}</p>
+                    <p>Event Title: {filteredParticipant.eventName}</p>
+                    <p>
+                      Event Description: {filteredParticipant.eventDescription}
+                    </p>
+                    <p>Event Date: {filteredParticipant.eventDate}</p>
+                    <p>Event Place: {filteredParticipant.eventPlace}</p>
+                  </>
+                ))}
+            </>
+          ) : (
+            <>
+              <TransparentButton
+                onClick={() => handleClick(participant.participantId, true)}
+              >
+                Participant's events
+              </TransparentButton>
+            </>
+          )}
         </ParticipantContainer>
       ))}
     </ParticipantsContainer>

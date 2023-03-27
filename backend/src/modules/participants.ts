@@ -37,7 +37,8 @@ export const getAllParticipants = async (_, res) => {
     const result = await con.execute(
       `SELECT participant_id AS "participantId", first_name AS "firstName", last_name AS "lastName", email AS "email", date_of_birth AS "birthDate", age AS "age", participants.archived AS "isArchived"
       FROM participants 
-      ORDER BY last_name;`
+      ORDER BY last_name
+      SORT BY participant_id;`
     );
     await con.end();
 
