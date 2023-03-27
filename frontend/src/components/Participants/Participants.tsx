@@ -1,48 +1,47 @@
-import { useEffect, useContext } from "react";
-import axios from "axios";
-import { ParticipantsContext } from "../Participants/ParticipantsContext";
-import { EventsContext } from "../Events/EventsContext";
-import { ParticipantsContainer } from "../../styles/ParticipantsContainer";
-import { ParticipantContainer } from "../../styles/ParticipantContainer";
-import { TransparentButton } from "../../styles/TransparentButton";
+import { useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router";
+import { ParticipantsContext } from "../../context/ParticipantsContext";
+import {
+  ParticipantsContainer,
+  ParticipantContainer,
+  TransparentButton,
+} from "../../styles";
 
 export const Participants = () => {
-  const { participants, setParticipants } = useContext(ParticipantsContext);
-  const { events } = useContext(EventsContext);
+  const [isParticipantSelected, setIsParticipantSelected] =
+    useState<boolean>(false);
+  const [participantNumber, setParticipantNumber] = useState<number>(0);
 
-  const GetParticipants = () => {
-    axios
-      .get("http://localhost:5001/participants")
-      .then((res) => {
-        if (Array.isArray(res.data)) {
-          setParticipants(res.data);
-        }
-      })
-      .catch((error) => console.error(error));
+  const { participants } = useContext(ParticipantsContext);
+
+  const handleClick = (participantId: number, showList: boolean) => {
+    setParticipantNumber(participantId);
+    setIsParticipantSelected(showList);
   };
 
-  useEffect(() => {
-    GetParticipants();
-  }, []);
+  // let temp ;
 
-  const handleClick = (participantId: number) => {
-    const event = participants[participantId];
-  };
+  // participants.map(participant) => (
+  //  temp = [...temp,  participant])
+
+  // let cleanParticipants = temp.reduce((accumulator:TParticipants, value) => {
+  //   if (!accumulator.includes(currentValue)) {
+  //     accumulator([...accumulator, currentValue]);
+  //   }
+  //   return accumulator;
+  // }, []);
 
   return (
     <ParticipantsContainer>
       {participants.map((participant, i) => (
         <ParticipantContainer key={participant.participantId}>
-          <p>First name: {participant.participantId}</p>
+          <p>Participant Id: {participant.participantId}</p>
           <p>First name: {participant.firstName}</p>
           <p>Last name: {participant.lastName}</p>
           <p>Email: {participant.email}</p>
           <p>Date of Birth: {participant.birthDate}</p>
           <p>Participant Age: {participant.age}</p>
           <p>Participant Event Id: {participant.eventId}</p>
-          <TransparentButton onClick={() => handleClick(i)}>
-            Participants list
-          </TransparentButton>
         </ParticipantContainer>
       ))}
     </ParticipantsContainer>

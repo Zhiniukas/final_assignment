@@ -30,12 +30,12 @@ app.post("/register", userRegister);
 app.get("/participants", getParticipants);
 app.get("/all-participants", getAllParticipants);
 app.get("/participants/:participant_id", getParticipantEvents);
-app.post("/participants", postParticipant);
+app.post("/add-participant", isUserLoggedIn, postParticipant);
 
 //app.get("/events", isUserLoggedIn, getEvents);
 
 app.get("/events", getEvents);
-app.get("/events/:event_id", getEventParticipants);
+app.get("/event-participants", getEventParticipants);
 app.post("/events", postEvent);
 
 // app.get("/participants", isUserLoggedIn, getParticipants);

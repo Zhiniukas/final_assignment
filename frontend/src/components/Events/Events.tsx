@@ -1,29 +1,62 @@
-import { useState, useContext } from "react";
-import { ParticipantsContext } from "../Participants/ParticipantsContext";
-import { EventsContext } from "./EventsContext";
-import { EventsContainer } from "../../styles/EventsContainer";
-import { EventContainer } from "../../styles/EventContainer";
-import { TransparentButton } from "../../styles/TransparentButton";
+import { useContext, useState } from "react";
+import { useLocation } from "react-router";
+import { ParticipantsContext } from "../../context/ParticipantsContext";
+import { EventsContext } from "../../context/EventsContext";
+import {
+  EventsContainer,
+  EventContainer,
+  TransparentButton,
+} from "../../styles";
 
 export const Events = () => {
-  const { events } = useContext(EventsContext);
-  const { participants, setParticipants } = useContext(ParticipantsContext);
+  const location = useLocation();
+  const [isEventSelected, setIsEventSelected] = useState<boolean>(false);
+  const [eventNumber, setEventNumber] = useState<number>(0);
 
-  const handleClick = (eventIndex: number) => {
-    const event = events[eventIndex];
+  const { events } = useContext(EventsContext);
+  const { participants } = useContext(ParticipantsContext);
+
+  const handleClick = (eventIndex: number, showList: boolean) => {
+    setEventNumber(eventIndex);
+    setIsEventSelected(showList);
   };
 
   return (
-    <EventsContainer>
+    <EventsContainer key={location.key}>
       {events.map((event, i) => (
         <EventContainer key={event.id}>
-          <p>{event.title}</p>
-          <p>{event.description}</p>
-          <p>{event.date}</p>
-          <p>{event.place}</p>
-          <TransparentButton onClick={() => handleClick(i)}>
-            Participants list
-          </TransparentButton>
+          <p>Event Id: {event.id}</p>
+          <p>Event Title: {event.title}</p>
+          <p>Event Description: {event.description}</p>
+          <p>Event Date: {event.date}</p>
+          <p>Event Place: {event.place}</p>
+          {event.id === eventNumber && isEventSelected ? (
+            <>
+              <TransparentButton onClick={() => handleClick(event.id, false)}>
+                Hide Participants list
+              </TransparentButton>
+
+              {participants
+                .filter((participant) => participant.eventId === eventNumber)
+                .map((filteredParticipant, j) => (
+                  <>
+                    <p>Participant Id: {filteredParticipant.participantId}</p>
+                    <p>First name: {filteredParticipant.firstName}</p>
+                    <p>Last name: {filteredParticipant.lastName}</p>
+                    <p>Email: {filteredParticipant.email}</p>
+                    <p>Date of Birth: {filteredParticipant.birthDate}</p>
+                    <p>Participant Age: {filteredParticipant.age}</p>
+                    <p>Participant Event Id: {filteredParticipant.eventId}</p>
+                  </>
+                ))}
+            </>
+          ) : (
+            <>
+              <TransparentButton onClick={() => handleClick(event.id, true)}>
+                Participants list
+              </TransparentButton>
+            </>
+          )}
         </EventContainer>
       ))}
     </EventsContainer>
