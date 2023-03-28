@@ -44,7 +44,7 @@ export const AddParticipant = () => {
           headers: authed,
         }
       )
-      .then((result) => alert("Participant added successfully!"))
+      .then((result) => alert(`Participant added successfully! ${result}`))
       .catch((error) => console.error(error));
   };
 

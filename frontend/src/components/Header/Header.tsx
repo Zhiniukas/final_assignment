@@ -45,7 +45,7 @@ export const HeaderAuthed: FC = () => {
             </Link>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Link to="/logout">
+            <Link to="/logout" onClick={() => window.location.reload()}>
               <Typography fontSize=" 32px">Logout</Typography>
             </Link>
           </Grid>
@@ -76,12 +76,12 @@ export const HeaderNotAuthed: FC = () => {
       >
         <>
           <Grid item xs={12} sm={6}>
-            <Link to="/login">
+            <Link to="/login" onClick={() => window.location.reload()}>
               <Typography fontSize=" 32px">Sign in</Typography>
             </Link>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Link to="/login">
+            <Link to="/login" onClick={() => window.location.reload()}>
               <Typography fontSize=" 32px">Register</Typography>
             </Link>
           </Grid>

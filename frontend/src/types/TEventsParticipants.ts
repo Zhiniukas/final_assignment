@@ -1,4 +1,4 @@
-export type TParticipants = {
+export type TEventsParticipants = {
   participantId: number;
   firstName: string | null;
   lastName: number | null;
@@ -7,4 +7,8 @@ export type TParticipants = {
   age: number | null;
   isArchived: boolean | null;
   eventId: number | null;
+  eventName: string | null;
+  eventDescription: number | null;
+  eventDate: string | null;
+  eventPlace: string | null;
 };

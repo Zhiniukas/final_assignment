@@ -21,6 +21,11 @@ export const Events = () => {
     setIsEventSelected(showList);
   };
 
+  const handleDeleteParticipantClick = (
+    participantIndex: number | null,
+    eventIndex: number | null
+  ) => {};
+
   return (
     <EventsContainer key={location.key}>
       {events.map((event, i) => (
@@ -47,6 +52,16 @@ export const Events = () => {
                     <p>Date of Birth: {filteredParticipant.birthDate}</p>
                     <p>Participant Age: {filteredParticipant.age}</p>
                     <p>Participant Event Id: {filteredParticipant.eventId}</p>
+                    <TransparentButton
+                      onClick={() =>
+                        handleDeleteParticipantClick(
+                          filteredParticipant.participantId,
+                          eventNumber
+                        )
+                      }
+                    >
+                      Remove participant
+                    </TransparentButton>
                   </>
                 ))}
             </>

@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useContext, useState } from "react";
+import { EventParticipantsContext } from "../../context/EventsParticipantsContext";
 import { ParticipantsContext } from "../../context/ParticipantsContext";
 import {
   ParticipantsContainer,
   ParticipantContainer,
   TransparentButton,
+  EventsParticipantsContainer,
 } from "../../styles";
-import { TParticipants } from "../../types";
 
 export const Participants = () => {
   const [isParticipantSelected, setIsParticipantSelected] =
@@ -14,11 +14,17 @@ export const Participants = () => {
   const [participantNumber, setParticipantNumber] = useState<number>(0);
 
   const { participants } = useContext(ParticipantsContext);
+  const { eventsParticipants } = useContext(EventParticipantsContext);
 
   const handleClick = (participantId: number, showList: boolean) => {
     setParticipantNumber(participantId);
     setIsParticipantSelected(showList);
   };
+
+  const handleDeleteParticipantClick = (
+    participantIndex: number | null,
+    eventIndex: number | null
+  ) => {};
 
   return (
     <ParticipantsContainer>
@@ -30,6 +36,7 @@ export const Participants = () => {
           <p>Email: {participant.email}</p>
           <p>Date of Birth: {participant.birthDate}</p>
           <p>Participant Age: {participant.age}</p>
+
           {participant.participantId === participantNumber &&
           isParticipantSelected ? (
             <>
@@ -39,21 +46,36 @@ export const Participants = () => {
                 Hide Events list
               </TransparentButton>
 
-              {participants
+              {eventsParticipants
                 .filter(
                   (participant) =>
                     participant.participantId === participantNumber
                 )
                 .map((filteredParticipant, j) => (
-                  <>
-                    <p>Event Id: {filteredParticipant.eventId}</p>
-                    <p>Event Title: {filteredParticipant.eventName}</p>
-                    <p>
-                      Event Description: {filteredParticipant.eventDescription}
-                    </p>
-                    <p>Event Date: {filteredParticipant.eventDate}</p>
-                    <p>Event Place: {filteredParticipant.eventPlace}</p>
-                  </>
+                  <EventsParticipantsContainer
+                    key={filteredParticipant.eventId + " " + j}
+                  >
+                    <>
+                      <p>Event Id: {filteredParticipant.eventId}</p>
+                      <p>Event Title: {filteredParticipant.eventName}</p>
+                      <p>
+                        Event Description:{" "}
+                        {filteredParticipant.eventDescription}
+                      </p>
+                      <p>Event Date: {filteredParticipant.eventDate}</p>
+                      <p>Event Place: {filteredParticipant.eventPlace}</p>
+                      <TransparentButton
+                        onClick={() =>
+                          handleDeleteParticipantClick(
+                            participant.eventId,
+                            participantNumber
+                          )
+                        }
+                      >
+                        Delete Event
+                      </TransparentButton>
+                    </>
+                  </EventsParticipantsContainer>
                 ))}
             </>
           ) : (
