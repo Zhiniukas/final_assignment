@@ -122,6 +122,7 @@ export const MainRouter = () => {
                   <Route path="/" element={<Events />} />
                   <Route path="/logout" element={<Logout />} />
                   <Route path="/events" element={<Events />} />
+                  <Route path="/events/:id" element={<Events />} />
                   <Route path="/addParticipant" element={<AddParticipant />} />
                   <Route path="/participants" element={<Participants />} />
                 </>

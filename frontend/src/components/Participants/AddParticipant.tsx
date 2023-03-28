@@ -2,6 +2,15 @@ import { useState, useContext } from "react";
 import axios from "axios";
 import authHeader from "../../services/auth-header";
 import { EventsContext } from "../../context/EventsContext";
+import {
+  Grid,
+  Select,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Input,
+} from "@mui/material";
 
 export const AddParticipant = () => {
   const { events } = useContext(EventsContext);
@@ -12,25 +21,16 @@ export const AddParticipant = () => {
   const [birthDate, setBirthDate] = useState("");
   const [eventId, setEventId] = useState("");
 
-  const handleParticipantSubmit: React.FormEventHandler<
-    HTMLFormElement
-  > = () => {
+  const handleParticipantSubmit: React.FormEventHandler<HTMLFormElement> = (
+    event
+  ) => {
+    event.preventDefault();
+
     const authed = authHeader();
-    console.log(
-      {
-        firstName,
-        lastName,
-        email,
-        birthDate,
-        eventId,
-      },
-      {
-        headers: authed,
-      }
-    );
+
     axios
       .post(
-        "http://localhost:5001/add-participants",
+        "http://localhost:5001/add-participant",
         {
           firstName,
           lastName,
@@ -55,53 +55,106 @@ export const AddParticipant = () => {
   ));
 
   return (
-    <form onSubmit={handleParticipantSubmit}>
-      <label>
-        First Name
-        <input
-          type={"text"}
-          value={firstName}
-          onChange={(event) => setFirstName(event.target.value)}
-        />
-      </label>
-      <label>
-        Last Name
-        <input
-          value={lastName}
-          onChange={(event) => setLastName(event.target.value)}
-        />
-      </label>
-      <label>
-        Email
-        <input
-          type={"email"}
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
-      </label>
-      <label>
-        Date of Birth
-        <input
-          type={"Date"}
-          value={birthDate}
-          onChange={(event) => setBirthDate(event.target.value)}
-        />
-      </label>
-      <label>
-        Select Event:
-        <select
-          name="eventId"
-          value={eventId}
-          onChange={(event) => setEventId(event.target.value)}
-        >
-          <option value={""} disabled>
-            --Pick Event--
-          </option>
-          {eventOptions}
-        </select>
-      </label>
-
-      <button>Add new participant</button>
-    </form>
+    <Box
+      component={"form"}
+      onSubmit={handleParticipantSubmit}
+      key={1}
+      textAlign="center"
+      margin="0 auto"
+      width="90%"
+    >
+      <Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="firstName">First Name</InputLabel>
+            <Input
+              sx={{
+                width: 200,
+                height: 50,
+              }}
+              id="firstName"
+              type={"text"}
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="lastName">Last Name</InputLabel>
+            <Input
+              sx={{
+                width: 200,
+                height: 50,
+              }}
+              id="lastName"
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="email">Email</InputLabel>
+            <Input
+              sx={{
+                width: 200,
+                height: 50,
+              }}
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="birthDate">Date of Birth</InputLabel>
+            <Input
+              sx={{
+                width: 200,
+                height: 50,
+              }}
+              id="birthDate"
+              type="Date"
+              value={birthDate}
+              onChange={(event) => setBirthDate(event.target.value)}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <InputLabel htmlFor="eventId">Select event</InputLabel>
+            <Select
+              name="eventId"
+              placeholder="Enter Car Brand"
+              sx={{
+                width: 200,
+                height: 50,
+              }}
+              value={eventId}
+              onChange={(event) => setEventId(event.target.value)}
+            >
+              {eventOptions}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <FormControl>
+            <Button
+              sx={{
+                width: 200,
+                height: 50,
+              }}
+              type="submit"
+              size="small"
+            >
+              Add new participant
+            </Button>
+          </FormControl>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
