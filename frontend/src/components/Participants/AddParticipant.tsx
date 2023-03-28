@@ -1,20 +1,10 @@
-import { useState, useEffect, useContext } from "react";
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import Typography from "@mui/material/Typography";
-import { typography } from "@mui/system";
-import { TParticipants } from "../../types";
+import { useState, useContext } from "react";
 import axios from "axios";
 import authHeader from "../../services/auth-header";
 import { EventsContext } from "../../context/EventsContext";
-import { title } from "process";
-
-type Props = {};
 
 export const AddParticipant = () => {
   const { events } = useContext(EventsContext);
-  //   const [newStudent, setNewStudent] = useState<any[]>([]); // todo vienas
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -22,17 +12,25 @@ export const AddParticipant = () => {
   const [birthDate, setBirthDate] = useState("");
   const [eventId, setEventId] = useState("");
 
-  const handleParticipantSubmit: React.FormEventHandler<HTMLFormElement> = (
-    event
-  ) => {
+  const handleParticipantSubmit: React.FormEventHandler<
+    HTMLFormElement
+  > = () => {
     const authed = authHeader();
-    console.log(authed);
-    console.log(authHeader());
-    console.log(firstName, lastName, email, birthDate, eventId);
-
+    console.log(
+      {
+        firstName,
+        lastName,
+        email,
+        birthDate,
+        eventId,
+      },
+      {
+        headers: authed,
+      }
+    );
     axios
       .post(
-        "http://localhost:5001/add-participant",
+        "http://localhost:5001/add-participants",
         {
           firstName,
           lastName,
@@ -44,7 +42,9 @@ export const AddParticipant = () => {
           headers: authed,
         }
       )
-      .then((result) => alert(`Participant added successfully! ${result}`))
+      .then((result) =>
+        console.info(`Participant added successfully! ${result}`)
+      )
       .catch((error) => console.error(error));
   };
 

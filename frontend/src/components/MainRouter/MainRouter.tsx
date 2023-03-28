@@ -33,7 +33,6 @@ export const MainRouter = () => {
         headers: authed,
       })
       .then((res) => {
-        console.log(res.data);
         if (Array.isArray(res.data)) {
           if (isAuthed) {
             setEvents(res.data);
@@ -52,7 +51,6 @@ export const MainRouter = () => {
         headers: authed,
       })
       .then((res) => {
-        console.log(res.data);
         if (Array.isArray(res.data)) {
           if (isAuthed) {
             setParticipants(res.data);
@@ -70,7 +68,6 @@ export const MainRouter = () => {
         headers: authed,
       })
       .then((res) => {
-        console.log(res.data);
         if (Array.isArray(res.data)) {
           if (isAuthed) {
             setEventsParticipants(res.data);

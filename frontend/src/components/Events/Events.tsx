@@ -1,12 +1,9 @@
 import { useContext, useState } from "react";
 import { useLocation } from "react-router";
-import { ParticipantsContext } from "../../context/ParticipantsContext";
 import { EventsContext } from "../../context/EventsContext";
-import {
-  EventsContainer,
-  EventContainer,
-  TransparentButton,
-} from "../../styles";
+import { Grid, Typography, Box, Button } from "@mui/material";
+import { EventParticipantsContext } from "../../context/EventsParticipantsContext";
+import { participantRemove } from "../../services/participantRemove";
 
 export const Events = () => {
   const location = useLocation();
@@ -14,66 +11,170 @@ export const Events = () => {
   const [eventNumber, setEventNumber] = useState<number>(0);
 
   const { events } = useContext(EventsContext);
-  const { participants } = useContext(ParticipantsContext);
+  const { eventsParticipants, setEventsParticipants } = useContext(
+    EventParticipantsContext
+  );
 
   const handleClick = (eventIndex: number, showList: boolean) => {
     setEventNumber(eventIndex);
     setIsEventSelected(showList);
   };
 
+  const removeRecord = (pId: number | null, eId: number | null) => {
+    const updatedList = eventsParticipants.filter(
+      (record) => record.eventId !== eId || record.participantId !== pId
+    );
+    setEventsParticipants(updatedList);
+  };
+
   const handleDeleteParticipantClick = (
     participantIndex: number | null,
     eventIndex: number | null
-  ) => {};
+  ) => {
+    participantRemove(participantIndex, eventIndex);
+    removeRecord(participantIndex, eventIndex);
+  };
 
   return (
-    <EventsContainer key={location.key}>
-      {events.map((event, i) => (
-        <EventContainer key={event.id}>
-          <p>Event Id: {event.id}</p>
-          <p>Event Title: {event.title}</p>
-          <p>Event Description: {event.description}</p>
-          <p>Event Date: {event.date}</p>
-          <p>Event Place: {event.place}</p>
-          {event.id === eventNumber && isEventSelected ? (
-            <>
-              <TransparentButton onClick={() => handleClick(event.id, false)}>
-                Hide Participants list
-              </TransparentButton>
+    <Box key={location.key}>
+      <Grid container>
+        {events.map((event, i) => (
+          <Grid
+            key={event.id}
+            aria-label="Event list"
+            item
+            xs={12}
+            container
+            padding="10px"
+            justifyContent="space-between"
+            bgcolor="cream"
+            border="1px solid black"
+            mx="auto"
+            sx={{ "& MuiTypography-root": { fontSize: "20px" } }}
+          >
+            <Grid item xs={1}>
+              <Typography aria-label="event id">{event.id}</Typography>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography aria-label="event title">{event.title}</Typography>
+            </Grid>
+            <Grid item xs={4}>
+              <Typography aria-label="pevent description">
+                {event.description}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography aria-label="event date">{event.date}</Typography>
+            </Grid>
+            <Grid item xs={1}>
+              <Typography aria-label="event place">{event.place}</Typography>
+            </Grid>
 
-              {participants
-                .filter((participant) => participant.eventId === eventNumber)
-                .map((filteredParticipant, j) => (
-                  <>
-                    <p>Participant Id: {filteredParticipant.participantId}</p>
-                    <p>First name: {filteredParticipant.firstName}</p>
-                    <p>Last name: {filteredParticipant.lastName}</p>
-                    <p>Email: {filteredParticipant.email}</p>
-                    <p>Date of Birth: {filteredParticipant.birthDate}</p>
-                    <p>Participant Age: {filteredParticipant.age}</p>
-                    <p>Participant Event Id: {filteredParticipant.eventId}</p>
-                    <TransparentButton
-                      onClick={() =>
-                        handleDeleteParticipantClick(
-                          filteredParticipant.participantId,
-                          eventNumber
-                        )
-                      }
-                    >
-                      Remove participant
-                    </TransparentButton>
-                  </>
-                ))}
-            </>
-          ) : (
-            <>
-              <TransparentButton onClick={() => handleClick(event.id, true)}>
-                Participants list
-              </TransparentButton>
-            </>
-          )}
-        </EventContainer>
-      ))}
-    </EventsContainer>
+            {event.id === eventNumber && isEventSelected ? (
+              <>
+                <Grid item xs={1}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleClick(event.id, false)}
+                  >
+                    Hide list
+                  </Button>
+                </Grid>
+                <Grid container>
+                  {eventsParticipants
+                    .filter(
+                      (participant) => participant.eventId === eventNumber
+                    )
+                    .map((filteredParticipant, j) => (
+                      <Grid
+                        key={event.id}
+                        aria-label="Participanr"
+                        item
+                        xs={12}
+                        container
+                        padding="10px"
+                        justifyContent="space-between"
+                        bgcolor="cream"
+                        border="1px dotted black"
+                        mx="auto"
+                        sx={{
+                          "& MuiTypography-root": {
+                            fontSize: "15px",
+                          },
+                        }}
+                      >
+                        <>
+                          <Grid item xs={1}>
+                            <Typography aria-label="participant id">
+                              {filteredParticipant.participantId}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={2}>
+                            <Typography aria-label="participant first name">
+                              {filteredParticipant.firstName}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={2}>
+                            <Typography aria-label="participant last name">
+                              {filteredParticipant.lastName}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={2}>
+                            <Typography aria-label="participant email">
+                              {filteredParticipant.email}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={2}>
+                            <Typography aria-label="participant birth date">
+                              {filteredParticipant.birthDate}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={1}>
+                            <Typography aria-label="participant age">
+                              {filteredParticipant.age}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={1}>
+                            <Typography aria-label="participant eventId">
+                              {filteredParticipant.eventId}
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={1}>
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              onClick={() =>
+                                handleDeleteParticipantClick(
+                                  filteredParticipant.participantId,
+                                  eventNumber
+                                )
+                              }
+                            >
+                              Remove from list
+                            </Button>
+                          </Grid>
+                        </>
+                      </Grid>
+                    ))}
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid item xs={1}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleClick(event.id, true)}
+                  >
+                    Participants list
+                  </Button>
+                </Grid>
+              </>
+            )}
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 };

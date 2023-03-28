@@ -11,6 +11,7 @@ import { isUserLoggedIn } from "./src/utils/isLoggedIn";
 
 import { getParticipants } from "./src/modules/participants";
 import { postParticipant } from "./src/modules/participants";
+import { removeParticipant } from "./src/modules/participants";
 
 import { getEvents } from "./src/modules/events";
 import { getEventParticipants } from "./src/modules/events";
@@ -26,6 +27,8 @@ app.post("/login", userLogin);
 app.post("/register", userRegister);
 
 app.get("/participants", isUserLoggedIn, getParticipants);
+app.post("/remove-participant", isUserLoggedIn, removeParticipant);
+
 app.post("/add-participant", isUserLoggedIn, postParticipant);
 
 app.get("/events", isUserLoggedIn, getEvents);

@@ -164,3 +164,37 @@ export const postParticipant = async (req, res) => {
     return console.error(err);
   }
 };
+
+export const removeParticipant = async (req, res) => {
+  let participantData = req.body;
+
+  const cleanParticipantId = mysql
+    .escape(participantData.participantId)
+    .replaceAll("'", "");
+  const cleanEventId = mysql
+    .escape(participantData.eventId)
+    .replaceAll("'", "");
+
+  if (
+    participantData.eventId < 0 ||
+    Number.isNaN(participantData.eventId) ||
+    typeof participantData.eventId !== "number" ||
+    participantData.participantId < 0 ||
+    Number.isNaN(participantData.participantId) ||
+    typeof participantData.participantId !== "number"
+  ) {
+    return res.status(400).send(`Incorrect data provided`).end();
+  }
+
+  try {
+    const con = await mysql.createConnection(MYSQL_CONFIG);
+    const [data] = await con.execute(
+      `UPDATE event_participants SET is_archived = 1 WHERE (event_id = ${cleanEventId} AND participant_id = ${cleanParticipantId});`
+    );
+    await con.end();
+    res.send(res[0]).end();
+  } catch (err) {
+    res.status(500).send(err).end();
+    return console.error(err);
+  }
+};
