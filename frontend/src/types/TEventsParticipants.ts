@@ -1,4 +1,4 @@
-export type TEventsParticipants = {
+export type TEventsParticipant = {
   participantId: number;
   firstName: string | null;
   lastName: number | null;
@@ -12,3 +12,5 @@ export type TEventsParticipants = {
   eventDate: string | null;
   eventPlace: string | null;
 };
+
+export type TEventsParticipants = TEventsParticipant[];

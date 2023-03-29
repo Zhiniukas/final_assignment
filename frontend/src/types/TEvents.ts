@@ -1,4 +1,4 @@
-export type TEvents = {
+export type TEvent = {
   id: number;
   title: string | null;
   description: number | null;
@@ -6,3 +6,5 @@ export type TEvents = {
   place: string | null;
   isArchived: boolean | null;
 };
+
+export type TEvents = TEvent[];

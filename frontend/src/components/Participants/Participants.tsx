@@ -1,41 +1,56 @@
-import { useContext, useState } from "react";
-import { useLocation } from "react-router";
-import { EventParticipantsContext } from "../../context/EventsParticipantsContext";
-import { ParticipantsContext } from "../../context/ParticipantsContext";
-import { participantRemove } from "../../services/participantRemove";
+import { useEffect, useState } from "react";
 import { Grid, Typography, Box, Button } from "@mui/material";
+import { TEvents, TEventsParticipants, TParticipants } from "../../types";
+import eventBus from "../../common/EventBus";
+import authHeader from "../../services/auth-header";
+import * as AuthService from "../../services/auth.service";
+import {
+  GetEvents,
+  GetEventsParticipants,
+  GetParticipants,
+  LogOut,
+} from "../../services/dataFetch";
+import { handleDeleteParticipantClick } from "../../services/deleteParticipantEvent";
 
 export const Participants = () => {
-  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  let authed = authHeader();
+
   const [isParticipantSelected, setIsParticipantSelected] =
     useState<boolean>(false);
   const [participantNumber, setParticipantNumber] = useState<number>(0);
+  const [eventsParticipants, setEventsParticipants] =
+    useState<TEventsParticipants>([]);
+  const [events, setEvents] = useState<TEvents>([]);
 
-  const { participants } = useContext(ParticipantsContext);
-
-  const { eventsParticipants, setEventsParticipants } = useContext(
-    EventParticipantsContext
-  );
+  const [participants, setParticipants] = useState<TParticipants>([]);
 
   const handleClick = (participantId: number, showList: boolean) => {
     setParticipantNumber(participantId);
     setIsParticipantSelected(showList);
   };
 
-  const removeRecord = (pId: number | null, eId: number | null) => {
-    const updatedList = eventsParticipants.filter(
-      (record) => record.eventId !== eId || record.participantId !== pId
-    );
-    setEventsParticipants(updatedList);
-  };
+  useEffect(() => {
+    const user = AuthService.getCurrentUser();
 
-  const handleDeleteParticipantClick = (
-    participantIndex: number | null,
-    eventIndex: number | null
-  ) => {
-    participantRemove(participantIndex, eventIndex);
-    removeRecord(participantIndex, eventIndex);
-  };
+    if (user) {
+      setIsLoggedIn(true);
+    }
+
+    eventBus.on("logout", LogOut);
+
+    return () => {
+      eventBus.remove("logout", LogOut);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      GetEvents(isLoggedIn, authed);
+      GetParticipants(isLoggedIn, authed);
+      GetEventsParticipants(isLoggedIn, authed);
+    }
+  }, [isLoggedIn]);
 
   return (
     <Box key={"Participants"} textAlign="center" margin="0 auto" width="90%">

@@ -1,7 +1,6 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import authHeader from "../../services/auth-header";
-import { EventsContext } from "../../context/EventsContext";
 import {
   Grid,
   Select,
@@ -11,9 +10,10 @@ import {
   InputLabel,
   Input,
 } from "@mui/material";
+import { TEvents } from "../../types";
 
 export const AddParticipant = () => {
-  const { events } = useContext(EventsContext);
+  const [events, setEvents] = useState<TEvents>([]);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

@@ -10,6 +10,7 @@ type Props = {};
 
 export const Login: React.FC<Props> = () => {
   let navigate: NavigateFunction = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [message, setMessage] = useState<string>("");
@@ -48,6 +49,7 @@ export const Login: React.FC<Props> = () => {
 
         setLoading(false);
         setMessage(resMessage);
+        setIsLoggedIn(true);
       }
     );
   };

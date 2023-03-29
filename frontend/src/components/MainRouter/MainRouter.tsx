@@ -1,31 +1,32 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import axios from "axios";
 
 import { Events } from "../Events/Events";
 import { HeaderAuthed, HeaderNotAuthed } from "../Header/Header";
 import { Login, Logout } from "../Login";
 import { Participants } from "../Participants/Participants";
 import { AddParticipant } from "../Participants/AddParticipant";
-import * as AuthService from "../../services/auth.service";
-import eventBus from "../../common/EventBus";
-import { NotFoundPage } from "../NotFoundPage";
 import { TEvents, TEventsParticipants, TParticipants } from "../../types";
-import { EventsContext } from "../../context/EventsContext";
-import { ParticipantsContext } from "../../context/ParticipantsContext";
-import { EventParticipantsContext } from "../../context/EventsParticipantsContext";
+
+import { NotFoundPage } from "../NotFoundPage";
+import eventBus from "../../common/EventBus";
+import * as AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
+import axios from "axios";
 
 export const MainRouter = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-
-  const [events, setEvents] = useState<TEvents[]>([]);
-  const [participants, setParticipants] = useState<TParticipants[]>([]);
-  const [eventsParticipants, setEventsParticipants] = useState<
-    TEventsParticipants[]
-  >([]);
-
   let authed = authHeader();
+
+  const [events, setEvents] = useState<TEvents>([]);
+  const [eventsParticipants, setEventsParticipants] =
+    useState<TEventsParticipants>([]);
+  const [participants, setParticipants] = useState<TParticipants>([]);
+
+  const logOut = () => {
+    AuthService.logout();
+    setIsLoggedIn(false);
+  };
 
   const GetEvents = (isAuthed: boolean) => {
     axios
@@ -62,6 +63,7 @@ export const MainRouter = () => {
 
       .catch((error) => console.error(error));
   };
+
   const GetEventsParticipants = (isAuthed: boolean) => {
     axios
       .get("http://localhost:5001/event-participants", {
@@ -78,12 +80,6 @@ export const MainRouter = () => {
       })
 
       .catch((error) => console.error(error));
-  };
-
-  const logOut = () => {
-    AuthService.logout();
-    setIsLoggedIn(false);
-    authed = authHeader();
   };
 
   useEffect(() => {
@@ -108,35 +104,33 @@ export const MainRouter = () => {
     }
   }, [isLoggedIn]);
 
+  // const [events, setEvents] = useState<TEvents[]>([]);
+  // const [participants, setParticipants] = useState<TParticipants[]>([]);
+  // const [eventsParticipants, setEventsParticipants] = useState<
+  //   TEventsParticipants[]
+  // >([]);
+
   return (
-    <EventsContext.Provider value={{ events, setEvents }}>
-      <ParticipantsContext.Provider value={{ participants, setParticipants }}>
-        <EventParticipantsContext.Provider
-          value={{ eventsParticipants, setEventsParticipants }}
-        >
-          <BrowserRouter>
-            {isLoggedIn ? <HeaderAuthed /> : <HeaderNotAuthed />}
-            <Routes>
-              {isLoggedIn ? (
-                <>
-                  <Route path="/" element={<Events />} />
-                  <Route path="/logout" element={<Logout />} />
-                  <Route path="/events" element={<Events />} />
-                  <Route path="/events/:id" element={<Events />} />
-                  <Route path="/addParticipant" element={<AddParticipant />} />
-                  <Route path="/participants" element={<Participants />} />
-                </>
-              ) : (
-                <>
-                  <Route path="/" element={<Login />} />
-                  <Route path="/login" element={<Login />} />{" "}
-                </>
-              )}
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </BrowserRouter>
-        </EventParticipantsContext.Provider>
-      </ParticipantsContext.Provider>
-    </EventsContext.Provider>
+    <BrowserRouter>
+      {isLoggedIn ? <HeaderAuthed /> : <HeaderNotAuthed />}
+      <Routes>
+        {isLoggedIn ? (
+          <>
+            <Route path="/" element={<Events />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<Events />} />
+            <Route path="/addParticipant" element={<AddParticipant />} />
+            <Route path="/participants" element={<Participants />} />
+          </>
+        ) : (
+          <>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />{" "}
+          </>
+        )}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 };

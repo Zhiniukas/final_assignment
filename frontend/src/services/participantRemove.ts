@@ -3,7 +3,7 @@ import authHeader from "./auth-header";
 
 const API_URL = "http://localhost:5001/";
 
-export const participantRemove = (pId: number | null, eId: number | null) => {
+export const ParticipantRemove = (pId: number | null, eId: number | null) => {
   console.log(API_URL + "remove-participant");
   return axios
     .post(

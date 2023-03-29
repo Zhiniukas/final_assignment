@@ -1,39 +1,53 @@
-import { useContext, useState } from "react";
-import { useLocation } from "react-router";
-import { EventsContext } from "../../context/EventsContext";
+import { useEffect, useState } from "react";
 import { Grid, Typography, Box, Button } from "@mui/material";
-import { EventParticipantsContext } from "../../context/EventsParticipantsContext";
-import { participantRemove } from "../../services/participantRemove";
+import { TEvents, TEventsParticipants, TParticipants } from "../../types";
+import * as AuthService from "../../services/auth.service";
+import eventBus from "../../common/EventBus";
+import {
+  GetEvents,
+  GetEventsParticipants,
+  GetParticipants,
+  LogOut,
+} from "../../services/dataFetch";
+import authHeader from "../../services/auth-header";
+import { handleDeleteParticipantClick } from "../../services/deleteParticipantEvent";
 
 export const Events = () => {
-  const location = useLocation();
+  let authed = authHeader();
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
   const [isEventSelected, setIsEventSelected] = useState<boolean>(false);
   const [eventNumber, setEventNumber] = useState<number>(0);
 
-  const { events } = useContext(EventsContext);
-  const { eventsParticipants, setEventsParticipants } = useContext(
-    EventParticipantsContext
-  );
+  const events = GetEvents(isLoggedIn, authed);
+  const eventsParticipants = GetParticipants(isLoggedIn, authed);
 
   const handleClick = (eventIndex: number, showList: boolean) => {
     setEventNumber(eventIndex);
     setIsEventSelected(showList);
   };
 
-  const removeRecord = (pId: number | null, eId: number | null) => {
-    const updatedList = eventsParticipants.filter(
-      (record) => record.eventId !== eId || record.participantId !== pId
-    );
-    setEventsParticipants(updatedList);
-  };
+  useEffect(() => {
+    const user = AuthService.getCurrentUser();
 
-  const handleDeleteParticipantClick = (
-    participantIndex: number | null,
-    eventIndex: number | null
-  ) => {
-    participantRemove(participantIndex, eventIndex);
-    removeRecord(participantIndex, eventIndex);
-  };
+    if (user) {
+      setIsLoggedIn(true);
+    }
+
+    eventBus.on("logout", LogOut);
+
+    return () => {
+      eventBus.remove("logout", LogOut);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      GetEvents(isLoggedIn, authed);
+      GetParticipants(isLoggedIn, authed);
+      GetEventsParticipants(isLoggedIn, authed);
+    }
+  }, [isLoggedIn]);
 
   return (
     <Box key={"events"} textAlign="center" margin="0 auto" width="90%">
